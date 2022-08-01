@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["mongodb"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type Done {
+  exercice_id      String 
+  userIndexAnswer  Int
+  gotItRight       Boolean
+}
+
+model User {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String    @unique
+  email       String    @unique
+  password    String
+  points      Int       @default(0)
+  isAdmin     Boolean   @default(false)
+  done        Done[]
+  created_at  DateTime  @default(now())
+
+  @@map("users")
+}
+
+model Exercice {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  title               String  
+  subTitle            String?   @default("")
+  images              String[]  
+  answers             String[]
+  correctAnswerIndex  Int
+  subject_id          String
+  level_id            String
+  published           Boolean   
+
+  @@map("exercices")
+}
+
+model ExerciceType {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  name  String  @unique
+}
+
+model Subject {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  name  String  @unique
+
+  @@map("subjects")
+}
+
+model Level {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  name  String  @unique
+
+  @@map("levels")
+}
